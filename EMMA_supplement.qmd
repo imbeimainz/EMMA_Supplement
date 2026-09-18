@@ -1,0 +1,371 @@
+---
+title: >
+  Supplementary Information for the `EMMA` package
+subtitle: >
+  Bioinformatics Group, IMBEI, University Medical Center Mainz
+author:
+- name: Najla Abassi
+  affiliation: 
+  - Institute of Medical Biostatistics, Epidemiology and Informatics (IMBEI), Mainz
+  email: abassina@uni-mainz.de
+  orcid: 0000-0001-8357-0938
+- name: Annekathrin Nedwed
+  affiliation: 
+  - Institute of Medical Biostatistics, Epidemiology and Informatics (IMBEI), Mainz
+  email: anneludt@uni-mainz.de
+- name: Federico Marini
+  orcid: 0000-0003-3252-7758
+  affiliation: 
+  - Institute of Medical Biostatistics, Epidemiology and Informatics (IMBEI), Mainz
+  - Research Center for Immunotherapy (FZI), Mainz
+  email: marinif@uni-mainz.de
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+format:
+  html:
+    toc: true
+    number-sections: true
+    embed-resources: true
+    link-external-newwindow: true
+    smooth-scroll: true
+    theme: 
+    - yeti
+editor_options: 
+  chunk_output_type: console
+bibliography: bibliography.bib
+---
+
+
+```{r knitr, include = FALSE}
+knitr::opts_chunk$set(
+  comment   = "#>",
+  error     = FALSE,
+  warning   = FALSE,
+  eval      = TRUE,
+  message   = FALSE
+)
+```
+
+```{css}
+/*| echo: false */
+
+.scrollout {
+max-height: 500px;
+overflow-y: scroll;
+}
+```
+
+In this document, we demonstrate a concrete example of how
+`r BiocStyle::Biocpkg("EMMA")` supports transparent reporting and reproducibility of Functional Enrichment Analysis (FEA). We first perform and document enrichment analyses, freeze the corresponding software environment, and subsequently restore this environment in a clean installation to rerun the analyses using the provenance recorded by `EMMA`.
+
+In this example we are using a publicly available dataset from Alasoo et al. "Shared genetic effects on chromatin and gene expression
+indicate a role for enhancer priming in immune response", 
+published in Nature Genetics, January 2018 
+[@Alasoo2018]. The data is made available via the `r BiocStyle::Biocpkg("macrophage")`
+Bioconductor package, which contains the files output from the Salmon
+quantification (version 0.12.0, with GENCODE v29 reference), as well as the
+values summarized at the gene level, which we will use to exemplify.
+
+In the `macrophage` experimental setting, the samples are available from 6
+different donors, in 4 different conditions (naive, treated with Interferon
+gamma, with SL1344, or with a combination of Interferon gamma and SL1344).
+
+Let's start by loading all the necessary packages:
+
+```{r loadlibraries}
+library("EMMA")
+library("macrophage")
+library("DESeq2")
+library("org.Hs.eg.db")
+library("clusterProfiler")
+```
+
+# Original analysis and environment capture
+
+For demonstration purposes, we will perform Differential Expression
+Analysis using the `r BiocStyle::Biocpkg("DESeq2")` framework. 
+
+## Getting a list of Differentially Expressed Genes
+
+```{r load_data}
+# load data
+data(gse, package = "macrophage")
+```
+
+```{r dds_setup}
+# set up design
+dds_macrophage <- DESeqDataSet(gse, design = ~ line + condition)
+# preprocess
+rownames(dds_macrophage) <- substr(rownames(dds_macrophage), 1, 15)
+keep <- rowSums(counts(dds_macrophage) >= 10) >= 6
+
+dds_macrophage <- dds_macrophage[keep, ]
+
+dds_macrophage
+```
+
+```{r differential_expression}
+# run DESeq
+dds_macrophage <- DESeq(dds_macrophage)
+# contrasts
+resultsNames(dds_macrophage)
+```
+
+```{r get_DE_results}
+# get de res for 1st contrast
+IFNg_vs_naive <- results(dds_macrophage,
+                         contrast = c("condition", "IFNg", "naive"),
+                         lfcThreshold = 1, alpha = 0.05)
+IFNg_vs_naive <- lfcShrink(dds_macrophage, coef = "condition_IFNg_vs_naive",
+                           res = IFNg_vs_naive,
+                           type = "apeglm")
+IFNg_vs_naive$SYMBOL <- rowData(dds_macrophage)$SYMBOL
+
+# get de res for 2nd contrast
+SL1344_vs_naive <- results(dds_macrophage,
+                         contrast = c("condition", "SL1344", "naive"),
+                         lfcThreshold = 1, alpha = 0.05)
+SL1344_vs_naive <- lfcShrink(dds_macrophage, coef = "condition_SL1344_vs_naive",
+                           res = SL1344_vs_naive,
+                           type = "apeglm")
+SL1344_vs_naive$SYMBOL <- rowData(dds_macrophage)$SYMBOL
+
+# get de res for 3rd contrast
+IFNg_SL1344_vs_naive <- results(dds_macrophage,
+                         contrast = c("condition", "IFNg_SL1344", "naive"),
+                         lfcThreshold = 1, alpha = 0.05)
+IFNg_SL1344_vs_naive <- lfcShrink(dds_macrophage, coef = "condition_IFNg_SL1344_vs_naive",
+                           res = IFNg_SL1344_vs_naive,
+                           type = "apeglm")
+IFNg_SL1344_vs_naive$SYMBOL <- rowData(dds_macrophage)$SYMBOL
+
+# sort by adjusted p value
+de_list <- list(
+  IFNg_vs_naive = IFNg_vs_naive,
+  SL1344_vs_naive = SL1344_vs_naive,
+  IFNg_SL1344_vs_naive = IFNg_SL1344_vs_naive
+)
+
+de_list <- lapply(de_list, function(df) {
+  df <- df[order(df$padj), ]
+  df <- df[!is.na(df$padj) & df$padj <= 0.05, ]
+  df
+})
+```
+
+```{r bg_genes}
+# set background gene list
+gene_universe <- rownames(dds_macrophage)
+```
+
+## Performing Functional Enrichment Analysis (FEA) with `r BiocStyle::Biocpkg("EMMA")`
+
+Now that we have a list of DE genes for different contrasts, we can perform Functional
+Enrichment Analysis.
+
+### FEA with `clusterProfiler::enrichGO()`
+
+In the following example, we will use the function `enrichGO()`
+
+```{r enrichGO}
+# 1st contrast
+de_res1 <- de_list$IFNg_vs_naive
+
+fea_res <- enrichGO(gene = rownames(de_res1),
+                    universe = gene_universe,
+                    keyType = "ENSEMBL",
+                    OrgDb = org.Hs.eg.db,
+                    ont = "BP",
+                    pAdjustMethod = "BH",
+                    pvalueCutoff = 0.05,
+                    qvalueCutoff = 0.1) |> 
+  EMMA_run(args_form = "evaluated",
+           store_session_info = TRUE)
+```
+
+```{r summry_record_GO}
+EMMA_show(fea_res)
+```
+
+### FEA with `clusterProfiler::enrichKEGG()`
+
+For the following contrast, we will use the function `enrichKEGG()`
+
+```{r enrichKEGG}
+# 2nd contrast
+de_res2 <- de_list$IFNg_SL1344_vs_naive
+
+# convert ENSEMBL to ENTREZID
+universe_map <- mapIds(
+    org.Hs.eg.db,
+    keys = gene_universe,
+    keytype = "ENSEMBL",
+    column = "ENTREZID",
+    multiVals = "first"
+)
+
+universe_entrez <- unique(na.omit(universe_map))
+genes_entrez <- universe_map[rownames(de_res2)]
+genes_entrez <- unique(na.omit(genes_entrez))
+
+fea_res2 <- enrichKEGG(gene = genes_entrez,
+                       universe = universe_entrez,
+                       keyType = "ncbi-geneid",
+                       organism = "hsa",
+                       pAdjustMethod = "BH",
+                       pvalueCutoff = 0.05,
+                       qvalueCutoff = 0.1) |> 
+  EMMA_run(args_form = "evaluated",
+           store_session_info = TRUE)
+```
+
+```{r summry_record_KEGG}
+EMMA_show(fea_res2)
+```
+
+Here no KEGG version is recorded because this information is not exposed by the underlying remote resource.
+
+```{r fea_res_list}
+fea_list <- list(IFNg_vs_naive = fea_res,
+                 IFNg_SL1344_vs_naive = fea_res2)
+```
+
+## Save analysis results
+
+To save all the generated results, we will construct a DeeDeeExperiment object, to keep all analysis elements together. This step is optional.
+
+```{r dde}
+library(DeeDeeExperiment)
+
+dde <- DeeDeeExperiment(sce = dds_macrophage,
+                        de_results = de_list,
+                        enrich_results = fea_list)
+dde
+```
+
+```{r save, eval=FALSE}
+saveRDS(dde, "dde_macrophage.RDS")
+```
+
+## Capture the analysis environment with `EMMA_freeze()`
+
+```{r emma_freeze}
+project_path <- getwd()
+EMMA_freeze(project = project_path,
+            file = "EMMA_analysis.lock",
+            pkgs = loadedNamespaces(),
+            prompt = FALSE,
+            force = TRUE)
+```
+
+# Environment restoration and reproducibility check
+
+To evaluate environment restoration independently of the original installation, the analysis was reproduced in a Docker container based on R 4.6.0. 
+
+From within the Docker container, we recreate the analysis result using the following command:
+
+```{reval=FALSE}
+library("renv")
+restore(lockfile = "/home/rstudio/emma_supplement/EMMA_analysis.lock")
+```
+
+Then we load the analysis results
+
+```{r load_dde, eval=FALSE}
+library("DeeDeeExperiment")
+library("EMMA")
+library("org.Hs.eg.db")
+library("clusterProfiler")
+
+dde <- readRDS("/home/rstudio/emma_supplement/dde_macrophage.RDS")
+
+# check
+dde
+```
+
+We extract the FEA results as well as the **provenance record**, i.e. `EMMA_record`
+
+```{r getFEA, eval=FALSE}
+fea_res_list <- getFEAList(dde)
+
+fea_res1 <- fea_res_list$IFNg_vs_naive
+fea_res2 <- fea_res_list$IFNg_SL1344_vs_naive
+```
+
+```{r get_record, eval=FALSE}
+rec1 <- EMMA_get_record(fea_res1)
+rec2 <- EMMA_get_record(fea_res2)
+```
+
+## Reproducing the GO enrichment analysis
+
+```{r get_input, eval=FALSE}
+rec1$method$call
+
+gene_list <- rec1$input$arguments$gene
+background <- rec1$input$arguments$universe
+orgdb <- rec1$input$arguments$OrgDb
+```
+
+```{r run_fea_go, eval=FALSE}
+fea_res_new <- enrichGO(gene = gene_list,
+                        universe = background,
+                        keyType = "ENSEMBL",
+                        OrgDb = orgdb,
+                        ont = "BP",
+                        pAdjustMethod = "BH",
+                        pvalueCutoff = 0.05,
+                        qvalueCutoff = 0.1) |> 
+  EMMA_run(args_form = "evaluated",
+           store_session_info = TRUE)
+```
+
+```{r compare_1, eval=FALSE}
+# compare the FEA results
+all.equal(as.data.frame(fea_res1),
+          as.data.frame(fea_res_new))
+```
+
+## Reproducing the KEGG enrichment analysis
+
+```{r get_input2, eval=FALSE}
+rec2$method$call
+
+gene_list2 <- rec2$input$arguments$gene
+background2 <- rec2$input$arguments$universe
+```
+
+```{r run_fea_kegg, eval=FALSE}
+fea_res_new2 <- enrichKEGG(gene = genes_entrez,
+                          universe = universe_entrez,
+                          keyType = "ncbi-geneid",
+                          organism = "hsa",
+                          pAdjustMethod = "BH",
+                          pvalueCutoff = 0.05,
+                          qvalueCutoff = 0.1) |> 
+  EMMA_run(args_form = "evaluated",
+           store_session_info = TRUE)
+```
+
+```{r compare_2, eval=FALSE}
+# compare the FEA results
+all.equal(as.data.frame(fea_res2),
+          as.data.frame(fea_res_new2))
+```
+
+# Session info {.unnumbered}
+
+```{css}
+/*| echo: false */
+
+.smaller {
+  font-size: 10px
+}
+```
+
+```{r sessioinfo}
+#| class-output: smaller
+
+sessionInfo()
+```
+
+# References {.unnumbered}
