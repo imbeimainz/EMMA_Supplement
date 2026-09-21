@@ -45,15 +45,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{css}
-/*| echo: false */
-
-.scrollout {
-max-height: 500px;
-overflow-y: scroll;
-}
-```
-
 In this document, we demonstrate a concrete example of how
 `r BiocStyle::Biocpkg("EMMA")` supports transparent reporting and reproducibility of Functional Enrichment Analysis (FEA). We first perform and document enrichment analyses, freeze the corresponding software environment, and subsequently restore this environment in a clean installation to rerun the analyses using the provenance recorded by `EMMA`.
 
@@ -285,10 +276,8 @@ dde
 We extract the FEA results as well as the **provenance record**, i.e. `EMMA_record`
 
 ```{r getFEA, eval=FALSE}
-fea_res_list <- getFEAList(dde)
-
-fea_res1 <- fea_res_list$IFNg_vs_naive
-fea_res2 <- fea_res_list$IFNg_SL1344_vs_naive
+fea_res1 <- getFEA(dde, fea_name = "IFNg_vs_naive", format = "original")
+fea_res2 <- getFEA(dde, fea_name = "IFNg_SL1344_vs_naive", format = "original")
 ```
 
 ```{r get_record, eval=FALSE}
@@ -303,14 +292,13 @@ rec1$method$call
 
 gene_list <- rec1$input$arguments$gene
 background <- rec1$input$arguments$universe
-orgdb <- rec1$input$arguments$OrgDb
 ```
 
 ```{r run_fea_go, eval=FALSE}
 fea_res_new <- enrichGO(gene = gene_list,
                         universe = background,
                         keyType = "ENSEMBL",
-                        OrgDb = orgdb,
+                        OrgDb = org.Hs.eg.db,
                         ont = "BP",
                         pAdjustMethod = "BH",
                         pvalueCutoff = 0.05,
@@ -335,8 +323,8 @@ background2 <- rec2$input$arguments$universe
 ```
 
 ```{r run_fea_kegg, eval=FALSE}
-fea_res_new2 <- enrichKEGG(gene = genes_entrez,
-                          universe = universe_entrez,
+fea_res_new2 <- enrichKEGG(gene = gene_list2,
+                          universe = background2,
                           keyType = "ncbi-geneid",
                           organism = "hsa",
                           pAdjustMethod = "BH",
