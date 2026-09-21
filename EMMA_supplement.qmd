@@ -259,7 +259,7 @@ EMMA_freeze(project = project_path,
 
 # Environment restoration and reproducibility check
 
-To evaluate environment restoration independently of the original installation, the analysis was reproduced in a Docker container based on R 4.6.0. 
+To evaluate environment restoration independently of the original installation, the analysis was reproduced in a Docker container based on R 4.6.1. 
 
 From within the Docker container, we recreate the analysis result using the following command:
 
