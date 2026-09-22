@@ -257,7 +257,7 @@ To evaluate environment restoration independently of the original installation, 
 
 From within the Docker container, we recreate the analysis result using the following command:
 
-```{reval=FALSE}
+```{r eval=FALSE}
 library("renv")
 restore(lockfile = "/home/rstudio/emma_supplement/EMMA_analysis.lock")
 ```
