@@ -4,7 +4,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends libcurl4-openssl-dev && \
     rm -rf /var/lib/apt/lists/*
 
-RUN R -e "install.packages('renv')"
+RUN R -e "install.packages('renv', repos = 'https://rstudio.r-universe.dev')"
 
 COPY EMMA_analysis.lock /home/rstudio/emma_supplement/EMMA_analysis.lock
 COPY EMMA_supplement.qmd /home/rstudio/emma_supplement/EMMA_supplement.qmd

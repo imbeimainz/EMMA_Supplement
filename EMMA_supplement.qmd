@@ -312,8 +312,13 @@ fea_res_new <- enrichGO(gene = gene_list,
 
 ```{r compare_1, eval=FALSE}
 # compare the FEA results
-all.equal(as.data.frame(fea_res1),
-          as.data.frame(fea_res_new))
+# compare all columns in FEA results (apart from the geneset column)
+all.equal(fea_res1[, names(fea_res1) != "geneID"],
+          fea_res_new[, names(fea_res_new) != "geneID"])
+# compare the genesets
+all(mapply(setequal,
+           strsplit(fea_res1$geneID, "/"),
+           strsplit(fea_res_new$geneID, "/")))
 ```
 
 ## Reproducing the KEGG enrichment analysis
@@ -339,8 +344,13 @@ fea_res_new2 <- enrichKEGG(gene = gene_list2,
 
 ```{r compare_2, eval=FALSE}
 # compare the FEA results
-all.equal(as.data.frame(fea_res2),
-          as.data.frame(fea_res_new2))
+# compare all columns in FEA results (apart from the geneset column)
+all.equal(fea_res2[, names(fea_res2) != "geneID"],
+          fea_res_new2[, names(fea_res_new2) != "geneID"])
+# compare the genesets
+all(mapply(setequal,
+           strsplit(fea_res2$geneID, "/"),
+           strsplit(fea_res_new2$geneID, "/")))
 ```
 
 # Session info {.unnumbered}
