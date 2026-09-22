@@ -34,7 +34,6 @@ editor_options:
 bibliography: bibliography.bib
 ---
 
-
 ```{r knitr, include = FALSE}
 knitr::opts_chunk$set(
   comment   = "#>",
@@ -43,6 +42,10 @@ knitr::opts_chunk$set(
   eval      = TRUE,
   message   = FALSE
 )
+```
+
+```{r setup_for_kegg, include=FALSE}
+options(timeout = 300)
 ```
 
 In this document, we demonstrate a concrete example of how
@@ -239,7 +242,7 @@ saveRDS(dde, "dde_macrophage.RDS")
 
 ## Capture the analysis environment with `EMMA_freeze()`
 
-```{r emma_freeze}
+```{r emma_freeze, eval=FALSE}
 project_path <- getwd()
 EMMA_freeze(project = project_path,
             file = "EMMA_analysis.lock",
