@@ -9,7 +9,7 @@
 <meta name="author" content="Najla Abassi">
 <meta name="author" content="Annekathrin Nedwed">
 <meta name="author" content="Federico Marini">
-<meta name="dcterms.date" content="2026-09-22">
+<meta name="dcterms.date" content="2026-09-24">
 
 <title>Supplementary Information for the EMMA package</title>
 <style>
@@ -2272,7 +2272,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 22, 2026</p>
+      <p class="date">September 24, 2026</p>
     </div>
   </div>
   
@@ -2511,9 +2511,6 @@ vertical-align: -.125em;
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">pkgs =</span> <span class="fu">loadedNamespaces</span>(),</span>
 <span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">prompt =</span> <span class="cn">FALSE</span>,</span>
 <span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">force =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; - The lockfile is already up to date.</code></pre>
-</div>
 </div>
 </section>
 </section>
@@ -2521,78 +2518,90 @@ vertical-align: -.125em;
 <h1 data-number="2"><span class="header-section-number">2</span> Environment restoration and reproducibility check</h1>
 <p>To evaluate environment restoration independently of the original installation, the analysis was reproduced in a Docker container based on R 4.6.1.</p>
 <p>From within the Docker container, we recreate the analysis result using the following command:</p>
-<pre data-reval="FALSE"><code>library(&quot;renv&quot;)
-restore(lockfile = &quot;/home/rstudio/emma_supplement/EMMA_analysis.lock&quot;)</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;renv&quot;</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">restore</span>(<span class="at">lockfile =</span> <span class="st">&quot;/home/rstudio/emma_supplement/EMMA_analysis.lock&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>Then we load the analysis results</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;DeeDeeExperiment&quot;</span>)</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;EMMA&quot;</span>)</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;org.Hs.eg.db&quot;</span>)</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;clusterProfiler&quot;</span>)</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>dde <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;/home/rstudio/emma_supplement/dde_macrophage.RDS&quot;</span>)</span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co"># check</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>dde</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;DeeDeeExperiment&quot;</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;EMMA&quot;</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;org.Hs.eg.db&quot;</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;clusterProfiler&quot;</span>)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>dde <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;/home/rstudio/emma_supplement/dde_macrophage.RDS&quot;</span>)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co"># check</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>dde</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We extract the FEA results as well as the <strong>provenance record</strong>, i.e. <code>EMMA_record</code></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>fea_res1 <span class="ot">&lt;-</span> <span class="fu">getFEA</span>(dde, <span class="at">fea_name =</span> <span class="st">&quot;IFNg_vs_naive&quot;</span>, <span class="at">format =</span> <span class="st">&quot;original&quot;</span>)</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>fea_res2 <span class="ot">&lt;-</span> <span class="fu">getFEA</span>(dde, <span class="at">fea_name =</span> <span class="st">&quot;IFNg_SL1344_vs_naive&quot;</span>, <span class="at">format =</span> <span class="st">&quot;original&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>fea_res1 <span class="ot">&lt;-</span> <span class="fu">getFEA</span>(dde, <span class="at">fea_name =</span> <span class="st">&quot;IFNg_vs_naive&quot;</span>, <span class="at">format =</span> <span class="st">&quot;original&quot;</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>fea_res2 <span class="ot">&lt;-</span> <span class="fu">getFEA</span>(dde, <span class="at">fea_name =</span> <span class="st">&quot;IFNg_SL1344_vs_naive&quot;</span>, <span class="at">format =</span> <span class="st">&quot;original&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>rec1 <span class="ot">&lt;-</span> <span class="fu">EMMA_get_record</span>(fea_res1)</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>rec2 <span class="ot">&lt;-</span> <span class="fu">EMMA_get_record</span>(fea_res2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>rec1 <span class="ot">&lt;-</span> <span class="fu">EMMA_get_record</span>(fea_res1)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>rec2 <span class="ot">&lt;-</span> <span class="fu">EMMA_get_record</span>(fea_res2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="reproducing-the-go-enrichment-analysis" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="reproducing-the-go-enrichment-analysis"><span class="header-section-number">2.1</span> Reproducing the GO enrichment analysis</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>rec1<span class="sc">$</span>method<span class="sc">$</span>call</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>gene_list <span class="ot">&lt;-</span> rec1<span class="sc">$</span>input<span class="sc">$</span>arguments<span class="sc">$</span>gene</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>background <span class="ot">&lt;-</span> rec1<span class="sc">$</span>input<span class="sc">$</span>arguments<span class="sc">$</span>universe</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>rec1<span class="sc">$</span>method<span class="sc">$</span>call</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>gene_list <span class="ot">&lt;-</span> rec1<span class="sc">$</span>input<span class="sc">$</span>arguments<span class="sc">$</span>gene</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>background <span class="ot">&lt;-</span> rec1<span class="sc">$</span>input<span class="sc">$</span>arguments<span class="sc">$</span>universe</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>fea_res_new <span class="ot">&lt;-</span> <span class="fu">enrichGO</span>(<span class="at">gene =</span> gene_list,</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">universe =</span> background,</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">keyType =</span> <span class="st">&quot;ENSEMBL&quot;</span>,</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">OrgDb =</span> org.Hs.eg.db,</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">ont =</span> <span class="st">&quot;BP&quot;</span>,</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>                        <span class="at">pAdjustMethod =</span> <span class="st">&quot;BH&quot;</span>,</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">pvalueCutoff =</span> <span class="fl">0.05</span>,</span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>                        <span class="at">qvalueCutoff =</span> <span class="fl">0.1</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">EMMA_run</span>(<span class="at">args_form =</span> <span class="st">&quot;evaluated&quot;</span>,</span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>           <span class="at">store_session_info =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>fea_res_new <span class="ot">&lt;-</span> <span class="fu">enrichGO</span>(<span class="at">gene =</span> gene_list,</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">universe =</span> background,</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">keyType =</span> <span class="st">&quot;ENSEMBL&quot;</span>,</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">OrgDb =</span> org.Hs.eg.db,</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">ont =</span> <span class="st">&quot;BP&quot;</span>,</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>                        <span class="at">pAdjustMethod =</span> <span class="st">&quot;BH&quot;</span>,</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">pvalueCutoff =</span> <span class="fl">0.05</span>,</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>                        <span class="at">qvalueCutoff =</span> <span class="fl">0.1</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">EMMA_run</span>(<span class="at">args_form =</span> <span class="st">&quot;evaluated&quot;</span>,</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>           <span class="at">store_session_info =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># compare the FEA results</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">all.equal</span>(<span class="fu">as.data.frame</span>(fea_res1),</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">as.data.frame</span>(fea_res_new))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># compare the FEA results</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co"># compare all columns in FEA results (apart from the geneset column)</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">all.equal</span>(fea_res1[, <span class="fu">names</span>(fea_res1) <span class="sc">!=</span> <span class="st">&quot;geneID&quot;</span>],</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>          fea_res_new[, <span class="fu">names</span>(fea_res_new) <span class="sc">!=</span> <span class="st">&quot;geneID&quot;</span>])</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co"># compare the genesets</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="fu">all</span>(<span class="fu">mapply</span>(setequal,</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>           <span class="fu">strsplit</span>(fea_res1<span class="sc">$</span>geneID, <span class="st">&quot;/&quot;</span>),</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>           <span class="fu">strsplit</span>(fea_res_new<span class="sc">$</span>geneID, <span class="st">&quot;/&quot;</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="reproducing-the-kegg-enrichment-analysis" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="reproducing-the-kegg-enrichment-analysis"><span class="header-section-number">2.2</span> Reproducing the KEGG enrichment analysis</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>rec2<span class="sc">$</span>method<span class="sc">$</span>call</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>gene_list2 <span class="ot">&lt;-</span> rec2<span class="sc">$</span>input<span class="sc">$</span>arguments<span class="sc">$</span>gene</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>background2 <span class="ot">&lt;-</span> rec2<span class="sc">$</span>input<span class="sc">$</span>arguments<span class="sc">$</span>universe</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>rec2<span class="sc">$</span>method<span class="sc">$</span>call</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>gene_list2 <span class="ot">&lt;-</span> rec2<span class="sc">$</span>input<span class="sc">$</span>arguments<span class="sc">$</span>gene</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>background2 <span class="ot">&lt;-</span> rec2<span class="sc">$</span>input<span class="sc">$</span>arguments<span class="sc">$</span>universe</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>fea_res_new2 <span class="ot">&lt;-</span> <span class="fu">enrichKEGG</span>(<span class="at">gene =</span> gene_list2,</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">universe =</span> background2,</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">keyType =</span> <span class="st">&quot;ncbi-geneid&quot;</span>,</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">organism =</span> <span class="st">&quot;hsa&quot;</span>,</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>                          <span class="at">pAdjustMethod =</span> <span class="st">&quot;BH&quot;</span>,</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>                          <span class="at">pvalueCutoff =</span> <span class="fl">0.05</span>,</span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>                          <span class="at">qvalueCutoff =</span> <span class="fl">0.1</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">EMMA_run</span>(<span class="at">args_form =</span> <span class="st">&quot;evaluated&quot;</span>,</span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>           <span class="at">store_session_info =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>fea_res_new2 <span class="ot">&lt;-</span> <span class="fu">enrichKEGG</span>(<span class="at">gene =</span> gene_list2,</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">universe =</span> background2,</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">keyType =</span> <span class="st">&quot;ncbi-geneid&quot;</span>,</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">organism =</span> <span class="st">&quot;hsa&quot;</span>,</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>                          <span class="at">pAdjustMethod =</span> <span class="st">&quot;BH&quot;</span>,</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>                          <span class="at">pvalueCutoff =</span> <span class="fl">0.05</span>,</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>                          <span class="at">qvalueCutoff =</span> <span class="fl">0.1</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">EMMA_run</span>(<span class="at">args_form =</span> <span class="st">&quot;evaluated&quot;</span>,</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>           <span class="at">store_session_info =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># compare the FEA results</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">all.equal</span>(<span class="fu">as.data.frame</span>(fea_res2),</span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">as.data.frame</span>(fea_res_new2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># compare the FEA results</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="co"># compare all columns in FEA results (apart from the geneset column)</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">all.equal</span>(fea_res2[, <span class="fu">names</span>(fea_res2) <span class="sc">!=</span> <span class="st">&quot;geneID&quot;</span>],</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>          fea_res_new2[, <span class="fu">names</span>(fea_res_new2) <span class="sc">!=</span> <span class="st">&quot;geneID&quot;</span>])</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="co"># compare the genesets</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="fu">all</span>(<span class="fu">mapply</span>(setequal,</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>           <span class="fu">strsplit</span>(fea_res2<span class="sc">$</span>geneID, <span class="st">&quot;/&quot;</span>),</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>           <span class="fu">strsplit</span>(fea_res_new2<span class="sc">$</span>geneID, <span class="st">&quot;/&quot;</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -2606,7 +2615,7 @@ font-size: 10px
 </style>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre class="smaller"><code>#&gt; R version 4.6.1 (2026-06-24)
 #&gt; Platform: aarch64-apple-darwin23
@@ -2663,22 +2672,22 @@ font-size: 10px
 #&gt;  [67] stringr_1.6.0           limma_3.99.0            emdbook_1.3.14         
 #&gt;  [70] yulab.utils_0.2.5       splines_4.6.1           dplyr_1.2.1            
 #&gt;  [73] tweenr_2.0.3            treeio_1.37.0           lattice_0.23-1         
-#&gt;  [76] renv_1.2.4              bit_4.6.0               tidyselect_1.2.1       
-#&gt;  [79] fontLiberation_0.1.0    GO.db_3.23.1            locfit_1.5-9.12        
-#&gt;  [82] Biostrings_2.81.9       knitr_1.52              fontBitstreamVera_0.1.1
-#&gt;  [85] edgeR_4.99.6            xfun_0.61               statmod_1.5.2          
-#&gt;  [88] stringi_1.8.9           lazyeval_0.2.3          ggfun_0.2.1            
-#&gt;  [91] yaml_2.3.12             evaluate_1.0.5          codetools_0.2-20       
-#&gt;  [94] bbmle_1.0.26            qvalue_2.45.0           gdtools_0.5.1          
-#&gt;  [97] tibble_3.3.1            BiocManager_1.30.27     ggplotify_0.1.3        
-#&gt; [100] cli_3.6.6               systemfonts_1.3.2       processx_3.9.0         
-#&gt; [103] dichromat_2.0-1         Rcpp_1.1.2              coda_0.19-4.1          
-#&gt; [106] png_0.1-9               bdsmatrix_1.3-7         parallel_4.6.1         
-#&gt; [109] ggplot2_4.0.3           blob_1.3.0              DOSE_4.7.3             
-#&gt; [112] mvtnorm_1.4-2           apeglm_1.35.0           tidytree_0.4.8         
-#&gt; [115] ggiraph_0.9.6           enrichit_0.2.4          scales_1.4.0           
-#&gt; [118] writexl_2.0.1           purrr_1.2.2             crayon_1.5.3           
-#&gt; [121] BiocStyle_2.41.0        rlang_1.3.0             KEGGREST_1.53.6</code></pre>
+#&gt;  [76] bit_4.6.0               tidyselect_1.2.1        fontLiberation_0.1.0   
+#&gt;  [79] GO.db_3.23.1            locfit_1.5-9.12         Biostrings_2.81.9      
+#&gt;  [82] knitr_1.52              fontBitstreamVera_0.1.1 edgeR_4.99.6           
+#&gt;  [85] xfun_0.61               statmod_1.5.2           stringi_1.8.9          
+#&gt;  [88] lazyeval_0.2.3          ggfun_0.2.1             yaml_2.3.12            
+#&gt;  [91] evaluate_1.0.5          codetools_0.2-20        bbmle_1.0.26           
+#&gt;  [94] qvalue_2.45.0           gdtools_0.5.1           tibble_3.3.1           
+#&gt;  [97] BiocManager_1.30.27     ggplotify_0.1.3         cli_3.6.6              
+#&gt; [100] systemfonts_1.3.2       processx_3.9.0          dichromat_2.0-1        
+#&gt; [103] Rcpp_1.1.2              coda_0.19-4.1           png_0.1-9              
+#&gt; [106] bdsmatrix_1.3-7         parallel_4.6.1          ggplot2_4.0.3          
+#&gt; [109] blob_1.3.0              DOSE_4.7.3              mvtnorm_1.4-2          
+#&gt; [112] apeglm_1.35.0           tidytree_0.4.8          ggiraph_0.9.6          
+#&gt; [115] enrichit_0.2.4          scales_1.4.0            writexl_2.0.1          
+#&gt; [118] purrr_1.2.2             crayon_1.5.3            BiocStyle_2.41.0       
+#&gt; [121] rlang_1.3.0             KEGGREST_1.53.6</code></pre>
 </div>
 </div>
 </section>
