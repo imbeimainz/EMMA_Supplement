@@ -255,9 +255,10 @@ EMMA_freeze(project = project_path,
 
 To evaluate environment restoration independently of the original installation, the analysis was reproduced in a Docker container based on R 4.6.1. 
 
-From within the Docker container, we recreate the analysis result using the following command:
+From within the Docker container, we recreate the analysis result using the `renv::restore()` function. Normally, we would run this command, but to keep the demonstration simple, all packages listed in the `EMMA_analysis.lock` file were already installed in the container. 
 
 ```{r eval=FALSE}
+# do not run
 library("renv")
 restore(lockfile = "/home/rstudio/emma_supplement/EMMA_analysis.lock")
 ```
@@ -269,6 +270,8 @@ library("DeeDeeExperiment")
 library("EMMA")
 library("org.Hs.eg.db")
 library("clusterProfiler")
+
+renv::load(project = "/home/rstudio/emma_analysis")
 
 dde <- readRDS("/home/rstudio/emma_supplement/dde_macrophage.RDS")
 
@@ -352,6 +355,25 @@ all(mapply(setequal,
            strsplit(fea_res2$geneID, "/"),
            strsplit(fea_res_new2$geneID, "/")))
 ```
+
+KEGG annotations are continuously updated. As `enrichKEGG()` retrieves these annotations **online**, re-running the analysis at a later time may yield slightly different enrichment results, even when using identical input data, analysis parameters, and software versions.
+
+# Supported functions and captured provenance (as of Sept 2026)
+
+Here we provide a list of the currently supported functions in `EMMA` and the metadata they capture
+
+| Function     | Call | Function name | Package name/version | Argument | Gene set resource | Annotation resource version |
+|--------------|------|---------------|----------------------|----------|-------------------|-----------------------------|
+| `enrichGO`     | +    | +             | +                    | +        | +                 | +                          |
+| `gseGO`        | +    | +             | +                    | +        | +                 | +                          |
+| `groupGO`      | +    | +             | +                    | +        | +                 | +                          |
+| `enrichKEGG`   | +    | +             | +                    | +        | +                 | -                           |
+| `gseKEGG`      | +    | +             | +                    | +        | +                 | -                           |
+| `gost`         | +    | +             | +                    | +        | +                 | +                           |                       |
+| `wrappers`     | +    | +             | +/-                  | +        | +/-               | +/-                         |
+| `custom`       | +    | +             | -                    | +        | -                 | -                           |
+
++: captured automatically; -: not captured automatically; +/-: conditionally captured when the required information can be identified or is available
 
 # Session info {.unnumbered}
 
