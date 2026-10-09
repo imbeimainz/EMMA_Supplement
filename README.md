@@ -28,9 +28,7 @@ docker run -e PASSWORD=emma -p 2711:8787 emma_supplement
 
 To sign-in, use `username = rstudio`, `password = emma`
 
-5- Inside RStudio server console, create a new folder to run the analysis in
-with `dir.create("/home/rstudio/emma_analysis")`
-then run `setwd("/home/rstudio/emma_analysis/")`
+5- Inside RStudio server console, run `setwd("/home/rstudio/emma_analysis/")`
 
 6- Then open `emma_supplement/EMMA_supplement.qmd`
 
